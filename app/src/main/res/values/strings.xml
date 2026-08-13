@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Download Maps</string>
+    <string name="downloading_notification_channel_name">Maps downloading</string>
+    <string name="downloading_notification_title">Map downloading</string>
+    <string name="unknown_error">Something went wrong…</string>
+    <string name="device_memory">Device memory</string>
+    <string name="free_memory_prefix">Free</string>
+    <string name="europe">Europe</string>
+</resources>
