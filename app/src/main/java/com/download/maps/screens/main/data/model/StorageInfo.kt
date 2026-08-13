@@ -4,6 +4,6 @@ data class StorageInfo(
     val totalBytes: Long,
     val freeBytes: Long
 ) {
-    val usedBytes: Long = totalBytes - freeBytes
-    val usedRatio: Float = if (totalBytes > 0) usedBytes.toFloat() / totalBytes else 0f
+    val usedRatio: Float =
+        if (totalBytes > 0) (totalBytes - freeBytes).toFloat() / totalBytes else 0f
 }

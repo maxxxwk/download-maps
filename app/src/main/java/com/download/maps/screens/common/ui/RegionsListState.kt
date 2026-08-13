@@ -5,7 +5,6 @@ import com.download.maps.domain.model.Region
 sealed interface RegionsListState {
     data object Loading : RegionsListState
     data object Error : RegionsListState
-
     data class Content(
         val regions: List<Region>,
         val downloadedRegionIds: Set<String> = emptySet(),

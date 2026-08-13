@@ -60,7 +60,6 @@ class DownloadMapQueueManager(
         val workRequest = OneTimeWorkRequestBuilder<MapDownloadWorker>()
             .addTag(TAG_ALL)
             .addTag("$REGIONS_ID_TAG_PREFIX${request.regionId}")
-            .addTag("$FILE_NAME_TAG_PREFIX${request.fileName}")
             .setInputData(workDataOf(MapDownloadWorker.KEY_FILE_NAME to request.fileName))
             .setConstraints(
                 Constraints.Builder()
@@ -143,6 +142,5 @@ class DownloadMapQueueManager(
         const val WORK_NAME = "download_map_current"
         const val TAG_ALL = "download_map_tag_all"
         const val REGIONS_ID_TAG_PREFIX = "region_id_"
-        const val FILE_NAME_TAG_PREFIX = "file_name_"
     }
 }

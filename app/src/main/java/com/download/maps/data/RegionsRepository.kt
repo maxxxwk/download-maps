@@ -41,8 +41,7 @@ class RegionsRepository @Inject constructor(
                             region
                         }
                     }
-                }
-                .awaitAll()
+                }.awaitAll()
         }
     }
 

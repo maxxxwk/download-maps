@@ -143,6 +143,7 @@ class MapDownloadWorker @AssistedInject constructor(
         ongoing: Boolean,
     ) {
         if (
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
             ContextCompat.checkSelfPermission(
                 applicationContext,
                 Manifest.permission.POST_NOTIFICATIONS
@@ -168,8 +169,7 @@ class MapDownloadWorker @AssistedInject constructor(
         return NotificationCompat.Builder(
             applicationContext,
             CHANNEL_ID,
-        )
-            .setContentTitle(applicationContext.getString(R.string.downloading_notification_title))
+        ).setContentTitle(applicationContext.getString(R.string.downloading_notification_title))
             .setContentText(fileName)
             .setSmallIcon(android.R.drawable.stat_sys_download)
             .setProgress(100, progress, false)

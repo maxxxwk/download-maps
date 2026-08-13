@@ -28,9 +28,9 @@ class RegionsXmlParser(
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.eventType != XmlPullParser.START_TAG) continue
             if (parser.name == "region") {
-                rootChildren.add(parseRegion(parser))
+                rootChildren.add(parseRegion())
             } else {
-                skip(parser)
+                skip()
             }
         }
 
@@ -47,7 +47,7 @@ class RegionsXmlParser(
         )
     }
 
-    private fun parseRegion(parser: XmlPullParser): RegionDto {
+    private fun parseRegion(): RegionDto {
         parser.require(XmlPullParser.START_TAG, null, "region")
 
         val name = parser.getAttributeValue(null, "name") ?: ""
@@ -64,9 +64,9 @@ class RegionsXmlParser(
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.eventType != XmlPullParser.START_TAG) continue
             if (parser.name == "region") {
-                children.add(parseRegion(parser))
+                children.add(parseRegion())
             } else {
-                skip(parser)
+                skip()
             }
         }
 
@@ -83,7 +83,7 @@ class RegionsXmlParser(
         )
     }
 
-    private fun skip(parser: XmlPullParser) {
+    private fun skip() {
         if (parser.eventType != XmlPullParser.START_TAG) return
         var depth = 1
         while (depth != 0) {

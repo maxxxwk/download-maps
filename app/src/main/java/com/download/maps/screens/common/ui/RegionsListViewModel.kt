@@ -28,26 +28,26 @@ class RegionsListViewModel @AssistedInject constructor(
     }
 
     fun reload() {
-        onIntent(RegionsListIntent.OnReload)
+        onIntent(RegionsListIntent.Reload)
     }
 
     fun download(regionId: String, fileName: String) {
-        onIntent(RegionsListIntent.OnDownload(regionId, fileName))
+        onIntent(RegionsListIntent.Download(regionId, fileName))
     }
 
     fun cancelDownload(regionId: String) {
-        onIntent(RegionsListIntent.OnCancelDownload(regionId))
+        onIntent(RegionsListIntent.CancelDownload(regionId))
     }
 
     override fun executeIntent(intent: RegionsListIntent): Flow<RegionsListStateMutation> {
         return when (intent) {
-            is RegionsListIntent.OnReload -> loadData()
+            is RegionsListIntent.Reload -> loadData()
 
-            is RegionsListIntent.OnDownload -> flow {
+            is RegionsListIntent.Download -> flow {
                 downloadMapQueueManager.downloadMap(intent.regionId, intent.fileName)
             }
 
-            is RegionsListIntent.OnCancelDownload -> flow {
+            is RegionsListIntent.CancelDownload -> flow {
                 downloadMapQueueManager.cancelDownload(intent.regionId)
             }
         }
@@ -108,9 +108,10 @@ class RegionsListViewModel @AssistedInject constructor(
             .onSuccess { regions ->
                 emit(RegionsListStateMutation.RegionsLoaded(regions))
                 val downloadsFlow =
-                    downloadMapQueueManager.observeDownloadedRegionIds(regions).map { downloadedIds ->
-                        RegionsListStateMutation.DownloadedUpdated(downloadedIds)
-                    }
+                    downloadMapQueueManager.observeDownloadedRegionIds(regions)
+                        .map { downloadedIds ->
+                            RegionsListStateMutation.DownloadedUpdated(downloadedIds)
+                        }
                 merge(downloadsFlow, observeQueueAndProgress())
                     .collect(::emit)
             }.onFailure {

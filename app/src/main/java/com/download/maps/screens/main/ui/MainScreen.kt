@@ -84,8 +84,8 @@ fun MainScreen(
     ) { paddingValues ->
         Column(
             modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(paddingValues),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             deviceStorageState.storageInfo?.let {
