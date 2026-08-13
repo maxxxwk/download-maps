@@ -55,7 +55,12 @@ class MainActivity : ComponentActivity() {
                             ),
                             deviceStorageViewModel = hiltViewModel(),
                             navigateToChildRegions = { id, displayName ->
-                                backStack.add(NavRoute.RegionsScreen(id, displayName))
+                                backStack.add(
+                                    NavRoute.RegionsScreen(
+                                        parentRegionId = id,
+                                        parentRegionName = displayName
+                                    )
+                                )
                             }
                         )
                     }
@@ -65,11 +70,14 @@ class MainActivity : ComponentActivity() {
                             viewModel = hiltViewModel<RegionsListViewModel, RegionsListViewModel.Factory>(
                                 creationCallback = { it.create(key.parentRegionId) }
                             ),
-                            onBack = {
-                                backStack.removeIf { it == key }
-                            },
+                            onBack = { backStack.removeIf { it == key } },
                             navigateToChildRegions = { id, displayName ->
-                                backStack.add(NavRoute.RegionsScreen(id, displayName))
+                                backStack.add(
+                                    NavRoute.RegionsScreen(
+                                        parentRegionId = id,
+                                        parentRegionName = displayName
+                                    )
+                                )
                             }
                         )
                     }
