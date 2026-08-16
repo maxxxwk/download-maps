@@ -1,7 +1,7 @@
 package com.download.maps.di.modules
 
 import com.download.maps.BuildConfig
-import com.download.maps.data.api.DownloadService
+import com.download.maps.features.regions.data.api.DownloadService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,12 +19,15 @@ object NetworkModule {
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(
-                HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.HEADERS
+            .apply {
+                if (BuildConfig.DEBUG) {
+                    addInterceptor(
+                        HttpLoggingInterceptor().apply {
+                            level = HttpLoggingInterceptor.Level.HEADERS
+                        }
+                    )
                 }
-            )
-            .build()
+            }.build()
     }
 
     @Provides

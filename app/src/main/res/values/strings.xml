@@ -4,6 +4,6 @@
     <string name="downloading_notification_title">Map downloading</string>
     <string name="unknown_error">Something went wrong…</string>
     <string name="device_memory">Device memory</string>
-    <string name="free_memory_prefix">Free</string>
+    <string name="free_memory_prefix">Free %s</string>
     <string name="europe">Europe</string>
 </resources>

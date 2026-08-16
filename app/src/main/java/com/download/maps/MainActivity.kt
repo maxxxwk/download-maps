@@ -23,10 +23,10 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.runtime.serialization.NavBackStackSerializer
 import androidx.navigation3.ui.NavDisplay
-import com.download.maps.screens.common.ui.RegionsListViewModel
-import com.download.maps.screens.main.ui.MainScreen
-import com.download.maps.screens.regions.ui.RegionsScreen
-import com.download.maps.ui.navigation.NavRoute
+import com.download.maps.features.regions.ui.RegionsListViewModel
+import com.download.maps.screens.main.MainScreen
+import com.download.maps.screens.regions.RegionsScreen
+import com.download.maps.screens.navigation.NavRoute
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
                             regionsListViewModel = hiltViewModel<RegionsListViewModel, RegionsListViewModel.Factory>(
                                 creationCallback = { it.create("europe") }
                             ),
-                            deviceStorageViewModel = hiltViewModel(),
+                            storageMemoryInfoViewModel = hiltViewModel(),
                             navigateToChildRegions = { id, displayName ->
                                 backStack.add(
                                     NavRoute.RegionsScreen(
