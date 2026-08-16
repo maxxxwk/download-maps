@@ -29,10 +29,11 @@ class RegionsRepository @Inject constructor(
         parentId: String
     ): Result<List<Region>> = runCatching {
         withContext(dispatcher) {
-            val parsedRegions = regionsXmlParser.parse(context.assets.open("regions.xml"))
+            val parsedRegions = context.assets.open("regions.xml").use {
+                regionsXmlParser.parse(it)
+            }
             val domainRegions = regionsMapper.mapToDomainList(parsedRegions)
-            domainRegions
-                .filter { it.parentId == parentId }
+            domainRegions.filter { it.parentId == parentId }
                 .map { region ->
                     async {
                         if (!isMapAvailable(region)) {
