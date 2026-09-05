@@ -1,12 +1,12 @@
 [versions]
 kotlin = "2.4.10"
-agp = "9.3.1"
+agp = "9.4.0"
 
 lifecycle = "2.11.0"
 composeBom = "2026.08.00"
 hilt = "2.60.1"
 androidxHilt = "1.4.0"
-nav3Core = "1.1.6"
+nav3Core = "1.1.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.19.0" }
@@ -25,7 +25,7 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 androidx-navigation3-runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "nav3Core" }
 androidx-navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "nav3Core" }
 
-okhttp-bom = { group = "com.squareup.okhttp3", name = "okhttp-bom", version = "5.4.0" }
+okhttp-bom = { group = "com.squareup.okhttp3", name = "okhttp-bom", version = "5.5.0" }
 okhttp-core = { group = "com.squareup.okhttp3", name = "okhttp" }
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor" }
 
