@@ -1,8 +1,8 @@
 package com.download.maps.features.regions.data
 
 import android.content.Context
-import com.download.maps.features.regions.data.api.DownloadService
 import com.download.maps.di.qualifiers.DispatcherIO
+import com.download.maps.features.regions.data.api.DownloadService
 import com.download.maps.features.regions.domain.model.Region
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -10,6 +10,8 @@ import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.util.concurrent.ConcurrentHashMap
@@ -24,16 +26,14 @@ class RegionsRepository @Inject constructor(
 ) {
 
     private val availabilityCache = ConcurrentHashMap<String, Boolean>()
+    private var cachedRegions: List<Region>? = null
+    private val regionsMutex = Mutex()
 
     suspend fun getRegionsByParentId(
         parentId: String
     ): Result<List<Region>> = runCatching {
         withContext(dispatcher) {
-            val parsedRegions = context.assets.open("regions.xml").use {
-                regionsXmlParser.parse(it)
-            }
-            val domainRegions = regionsMapper.mapToDomainList(parsedRegions)
-            domainRegions.filter { it.parentId == parentId }
+            getCachedRegions().filter { it.parentId == parentId }
                 .map { region ->
                     async {
                         if (!isMapAvailable(region)) {
@@ -43,6 +43,17 @@ class RegionsRepository @Inject constructor(
                         }
                     }
                 }.awaitAll()
+        }
+    }
+
+    private suspend fun getCachedRegions(): List<Region> = cachedRegions ?: run {
+        regionsMutex.withLock {
+            cachedRegions ?: run {
+                regionsMapper.mapToDomainList(
+                    context.assets.open("regions.xml")
+                        .use(regionsXmlParser::parse)
+                ).also { cachedRegions = it }
+            }
         }
     }
 
