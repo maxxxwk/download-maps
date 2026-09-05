@@ -27,7 +27,7 @@ class RegionsRepository @Inject constructor(
 
     private val availabilityCache = ConcurrentHashMap<String, Boolean>()
     private var cachedRegions: List<Region>? = null
-    private val regionsMutex = Mutex()
+    private val mutex = Mutex()
 
     suspend fun getRegionsByParentId(
         parentId: String
@@ -47,7 +47,7 @@ class RegionsRepository @Inject constructor(
     }
 
     private suspend fun getCachedRegions(): List<Region> = cachedRegions ?: run {
-        regionsMutex.withLock {
+        mutex.withLock {
             cachedRegions ?: run {
                 regionsMapper.mapToDomainList(
                     context.assets.open("regions.xml")
@@ -57,17 +57,16 @@ class RegionsRepository @Inject constructor(
         }
     }
 
-    @Suppress("ReturnCount", "MagicNumber")
     private suspend fun isMapAvailable(region: Region): Boolean {
         val fileName = region.fileName ?: return false
-        availabilityCache[region.id]?.let { return it }
-        val response = downloadService.isExistsMapFile(file = fileName)
-        val isAvailable = when {
-            response.isSuccessful -> true
-            response.code() == 404 -> false
-            else -> throw HttpException(response)
+        return availabilityCache[region.id] ?: run {
+            val response = downloadService.isExistsMapFile(file = fileName)
+            @Suppress("MagicNumber")
+            when {
+                response.isSuccessful -> true
+                response.code() == 404 -> false
+                else -> throw HttpException(response)
+            }.also { availabilityCache[region.id] = it }
         }
-        availabilityCache[region.id] = isAvailable
-        return isAvailable
     }
 }

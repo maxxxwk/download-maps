@@ -17,7 +17,6 @@ abstract class BaseViewModel<INTENT : Any, MUTATION : Any, STATE : Any>(
 ) : ViewModel() {
     private val intents = Channel<INTENT>(Channel.BUFFERED)
 
-    @Suppress("MagicNumber")
     @OptIn(ExperimentalCoroutinesApi::class)
     val state: StateFlow<STATE> = intents
         .receiveAsFlow()

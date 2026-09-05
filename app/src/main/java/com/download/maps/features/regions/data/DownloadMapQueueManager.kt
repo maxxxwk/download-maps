@@ -91,8 +91,7 @@ class DownloadMapQueueManager @Inject constructor(
                     WorkInfo.State.SUCCEEDED -> 100
                     else -> 0
                 }
-            }
-            .distinctUntilChanged()
+            }.distinctUntilChanged()
 
     fun observeQueueInfo(): Flow<DownloadQueueInfo> =
         combine(
