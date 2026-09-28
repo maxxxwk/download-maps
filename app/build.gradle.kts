@@ -58,6 +58,10 @@ dependencies {
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
 
+    implementation(libs.orbit.mvi.core)
+    implementation(libs.orbit.mvi.viewmodel)
+    implementation(libs.orbit.mvi.compose)
+
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.work)

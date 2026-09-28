@@ -29,10 +29,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.dropUnlessResumed
 import com.download.maps.R
 import com.download.maps.ui.theme.dividerColor
 import com.download.maps.ui.theme.iconsGrayColor
+import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 fun RegionsList(
@@ -41,7 +42,7 @@ fun RegionsList(
     modifier: Modifier = Modifier,
     listHeader: (@Composable LazyItemScope.() -> Unit)? = null
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.collectAsState()
 
     when (val currentState = state) {
         is RegionsListViewState.Content -> RegionsScreenContent(
@@ -88,8 +89,11 @@ private fun RegionsScreenContent(
                     .then(
                         if (region.hasSubregions) {
                             Modifier.clickable(
-                                onClick = {
-                                    navigateToChildRegions(region.id, region.displayName)
+                                onClick = dropUnlessResumed {
+                                    navigateToChildRegions(
+                                        region.id,
+                                        region.displayName
+                                    )
                                 }
                             )
                         } else {

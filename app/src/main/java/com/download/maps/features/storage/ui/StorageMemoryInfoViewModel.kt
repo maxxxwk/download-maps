@@ -1,47 +1,37 @@
 package com.download.maps.features.storage.ui
 
-import com.download.maps.core.viewmodel.BaseViewModel
+import androidx.lifecycle.ViewModel
 import com.download.maps.features.storage.data.StorageMemoryInfoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.filterNotNull
+import org.orbitmvi.orbit.OrbitContainerHost
+import org.orbitmvi.orbit.viewmodel.orbitContainer
 
 @HiltViewModel
 class StorageMemoryInfoViewModel @Inject constructor(
-    private val repository: StorageMemoryInfoRepository
-) : BaseViewModel<StorageMemoryInfoViewIntent, StorageMemoryInfoViewStateMutation, StorageMemoryInfoViewState>(
-    StorageMemoryInfoViewState()
-) {
+    private val storageMemoryInfoRepository: StorageMemoryInfoRepository
+) : OrbitContainerHost<StorageMemoryInfoViewState, StorageMemoryInfoViewState, Nothing>,
+    ViewModel() {
+
+    override val container = orbitContainer<StorageMemoryInfoViewState, Nothing>(
+        initialState = StorageMemoryInfoViewState()
+    )
 
     init {
-        onIntent(StorageMemoryInfoViewIntent.OnLoadStorage)
-    }
-
-    override fun executeIntent(
-        intent: StorageMemoryInfoViewIntent
-    ): Flow<StorageMemoryInfoViewStateMutation> = when (intent) {
-        is StorageMemoryInfoViewIntent.OnLoadStorage -> {
-            repository.observeStorageMemoryInfo()
-                .map { StorageMemoryInfoViewStateMutation.StorageLoaded(it) }
-        }
-    }
-
-    override fun reduceState(
-        currentSTATE: StorageMemoryInfoViewState,
-        mutation: StorageMemoryInfoViewStateMutation
-    ): StorageMemoryInfoViewState = when (mutation) {
-        is StorageMemoryInfoViewStateMutation.StorageLoaded -> {
-            mutation.storageMemoryInfo?.let {
-                currentSTATE.copy(
-                    freeSpace = bytesToReadableFormat(it.freeBytes),
-                    usedRatio = if (it.totalBytes > 0) {
-                        (it.totalBytes - it.freeBytes).toFloat() / it.totalBytes
-                    } else {
-                        0f
-                    }
-                )
-            } ?: currentSTATE
+        intent {
+            storageMemoryInfoRepository.observeStorageMemoryInfo().filterNotNull().collect {
+                reduce {
+                    state.copy(
+                        freeSpace = bytesToReadableFormat(it.freeBytes),
+                        usedRatio = if (it.totalBytes > 0) {
+                            (it.totalBytes - it.freeBytes).toFloat() / it.totalBytes
+                        } else {
+                            0f
+                        }
+                    )
+                }
+            }
         }
     }
 

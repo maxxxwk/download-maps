@@ -17,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.entryProvider
@@ -25,8 +26,8 @@ import androidx.navigation3.runtime.serialization.NavBackStackSerializer
 import androidx.navigation3.ui.NavDisplay
 import com.download.maps.features.regions.ui.RegionsListViewModel
 import com.download.maps.screens.main.MainScreen
-import com.download.maps.screens.regions.RegionsScreen
 import com.download.maps.screens.navigation.NavRoute
+import com.download.maps.screens.regions.RegionsScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -70,7 +71,7 @@ class MainActivity : ComponentActivity() {
                             viewModel = hiltViewModel<RegionsListViewModel, RegionsListViewModel.Factory>(
                                 creationCallback = { it.create(key.parentRegionId) }
                             ),
-                            onBack = { backStack.removeIf { it == key } },
+                            onBack = dropUnlessResumed { backStack.removeIf { it == key } },
                             navigateToChildRegions = { id, displayName ->
                                 backStack.add(
                                     NavRoute.RegionsScreen(

@@ -22,17 +22,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.download.maps.R
 import com.download.maps.ui.theme.appBarColor
 import com.download.maps.ui.theme.dividerColor
+import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 fun StorageMemoryInfoView(
     viewModel: StorageMemoryInfoViewModel,
     modifier: Modifier = Modifier
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.collectAsState()
     StorageMemoryInfoViewContent(
         state = state,
         modifier = modifier

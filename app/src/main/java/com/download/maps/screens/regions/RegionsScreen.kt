@@ -18,8 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.download.maps.R
-import com.download.maps.features.regions.ui.RegionsList
 import com.download.maps.features.regions.ui.RegionsListViewModel
+import com.download.maps.features.regions.ui.RegionsList
 import com.download.maps.ui.theme.appBarColor
 import com.download.maps.ui.theme.screenBackgroundColor
 
