@@ -13,21 +13,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.dropUnlessResumed
-import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
-import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
-import androidx.navigation3.runtime.serialization.NavBackStackSerializer
-import androidx.navigation3.ui.NavDisplay
 import com.download.maps.features.regions.ui.RegionsListViewModel
 import com.download.maps.screens.main.MainScreen
-import com.download.maps.screens.navigation.NavRoute
 import com.download.maps.screens.regions.RegionsScreen
+import com.download.maps.ui.navigation.MainScreenRoute
+import com.download.maps.ui.navigation.Navigation
+import com.download.maps.ui.navigation.RegionsScreenRoute
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -37,48 +32,21 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             RequestNotificationPermission()
-
-            val backStack = rememberSerializable(
-                serializer = NavBackStackSerializer()
-            ) { NavBackStack<NavRoute>(NavRoute.MainScreen) }
-
-            NavDisplay(
-                backStack = backStack,
-                entryDecorators = listOf(
-                    rememberSaveableStateHolderNavEntryDecorator(),
-                    rememberViewModelStoreNavEntryDecorator()
-                ),
+            Navigation(
                 entryProvider = entryProvider {
-                    entry<NavRoute.MainScreen> {
+                    entry<MainScreenRoute> {
                         MainScreen(
-                            regionsListViewModel = hiltViewModel<RegionsListViewModel, RegionsListViewModel.Factory>(
-                                creationCallback = { it.create("europe") }
-                            ),
-                            storageMemoryInfoViewModel = hiltViewModel(),
-                            navigateToChildRegions = { id, displayName ->
-                                backStack.add(
-                                    NavRoute.RegionsScreen(
-                                        parentRegionId = id,
-                                        parentRegionName = displayName
-                                    )
-                                )
-                            }
+                            regionsListViewModel = hiltViewModel<RegionsListViewModel, RegionsListViewModel.Factory> {
+                                it.create("europe")
+                            },
+                            storageMemoryInfoViewModel = hiltViewModel()
                         )
                     }
-                    entry<NavRoute.RegionsScreen> { key ->
+                    entry<RegionsScreenRoute> { key ->
                         RegionsScreen(
                             parentRegionName = key.parentRegionName,
-                            viewModel = hiltViewModel<RegionsListViewModel, RegionsListViewModel.Factory>(
-                                creationCallback = { it.create(key.parentRegionId) }
-                            ),
-                            onBack = dropUnlessResumed { backStack.removeIf { it == key } },
-                            navigateToChildRegions = { id, displayName ->
-                                backStack.add(
-                                    NavRoute.RegionsScreen(
-                                        parentRegionId = id,
-                                        parentRegionName = displayName
-                                    )
-                                )
+                            viewModel = hiltViewModel<RegionsListViewModel, RegionsListViewModel.Factory> {
+                                it.create(key.parentRegionId)
                             }
                         )
                     }
@@ -89,15 +57,11 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun RequestNotificationPermission() {
-        var permissionRequested by rememberSaveable {
-            mutableStateOf(false)
-        }
-
+        var permissionRequested by rememberSaveable { mutableStateOf(false) }
         val permissionRequestLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission(),
-            onResult = {}
+            onResult = { permissionRequested = true }
         )
-
         LaunchedEffect(Unit) {
             if (
                 !permissionRequested &&
@@ -107,7 +71,6 @@ class MainActivity : ComponentActivity() {
                     Manifest.permission.POST_NOTIFICATIONS
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                permissionRequested = true
                 permissionRequestLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }

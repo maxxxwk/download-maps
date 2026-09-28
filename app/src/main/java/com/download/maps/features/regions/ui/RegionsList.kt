@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.dropUnlessResumed
 import com.download.maps.R
+import com.download.maps.ui.navigation.LocalNavigator
+import com.download.maps.ui.navigation.RegionsScreenRoute
 import com.download.maps.ui.theme.dividerColor
 import com.download.maps.ui.theme.iconsGrayColor
 import org.orbitmvi.orbit.compose.collectAsState
@@ -38,7 +40,6 @@ import org.orbitmvi.orbit.compose.collectAsState
 @Composable
 fun RegionsList(
     viewModel: RegionsListViewModel,
-    navigateToChildRegions: (regionId: String, regionDisplayName: String) -> Unit,
     modifier: Modifier = Modifier,
     listHeader: (@Composable LazyItemScope.() -> Unit)? = null
 ) {
@@ -50,7 +51,6 @@ fun RegionsList(
             content = currentState,
             download = viewModel::download,
             cancel = viewModel::cancelDownload,
-            navigateToChildRegions = navigateToChildRegions,
             listHeader = listHeader
         )
 
@@ -65,22 +65,19 @@ fun RegionsList(
     }
 }
 
-@Suppress("LongParameterList")
+
 @Composable
 private fun RegionsScreenContent(
     content: RegionsListViewState.Content,
     download: (String, String) -> Unit,
     cancel: (String) -> Unit,
-    navigateToChildRegions: (regionId: String, regionDisplayName: String) -> Unit,
     modifier: Modifier = Modifier,
     listHeader: (@Composable LazyItemScope.() -> Unit)? = null
 ) {
     LazyColumn(modifier = modifier) {
         listHeader?.let { item { it.invoke(this) } }
-        itemsIndexed(
-            items = content.regions,
-            key = { _, region -> region.id }
-        ) { index, region ->
+        itemsIndexed(items = content.regions, key = { _, region -> region.id }) { index, region ->
+            val navigator = LocalNavigator.current
             RegionsListItem(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -90,9 +87,11 @@ private fun RegionsScreenContent(
                         if (region.hasSubregions) {
                             Modifier.clickable(
                                 onClick = dropUnlessResumed {
-                                    navigateToChildRegions(
-                                        region.id,
-                                        region.displayName
+                                    navigator.navigate(
+                                        RegionsScreenRoute(
+                                            parentRegionId = region.id,
+                                            parentRegionName = region.displayName
+                                        )
                                     )
                                 }
                             )
@@ -105,7 +104,6 @@ private fun RegionsScreenContent(
                             Modifier.drawBehind {
                                 val strokeWidth = 1.dp.toPx()
                                 val y = size.height - strokeWidth / 2
-
                                 drawLine(
                                     color = dividerColor,
                                     start = Offset(x = 64.dp.toPx(), y = y),
@@ -125,9 +123,7 @@ private fun RegionsScreenContent(
                 },
                 isDownloaded = content.downloadedRegionIds.contains(region.id),
                 isInQueue = content.queuedRegionIds.contains(region.id),
-                download = {
-                    region.fileName?.let { download(region.id, it) }
-                },
+                download = { region.fileName?.let { download(region.id, it) } },
                 cancel = { cancel(region.id) }
             )
         }
