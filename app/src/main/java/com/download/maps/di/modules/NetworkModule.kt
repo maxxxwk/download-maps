@@ -1,7 +1,6 @@
 package com.download.maps.di.modules
 
 import com.download.maps.BuildConfig
-import com.download.maps.features.regions.data.api.DownloadService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -10,7 +9,6 @@ import javax.inject.Singleton
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.create
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -38,8 +36,4 @@ object NetworkModule {
             .baseUrl(BuildConfig.BASE_URL)
             .build()
     }
-
-    @Provides
-    @Singleton
-    fun provideDownloadService(retrofit: Retrofit): DownloadService = retrofit.create()
 }

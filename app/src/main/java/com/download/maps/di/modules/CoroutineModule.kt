@@ -1,7 +1,7 @@
 package com.download.maps.di.modules
 
-import com.download.maps.di.qualifiers.ApplicationScope
-import com.download.maps.di.qualifiers.DispatcherDefault
+import com.download.maps.common.di.qualifiers.ApplicationScope
+import com.download.maps.common.di.qualifiers.DispatcherDefault
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
