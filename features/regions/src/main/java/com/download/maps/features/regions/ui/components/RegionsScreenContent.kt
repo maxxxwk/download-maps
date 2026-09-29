@@ -84,7 +84,8 @@ internal fun RegionsScreenContent(
 }
 
 @Suppress("MagicNumber")
-private class RegionsListViewStateContentParameterProvider: PreviewParameterProvider<RegionsListViewState.Content> {
+private class RegionsListViewStateContentParameterProvider :
+    PreviewParameterProvider<RegionsListViewState.Content> {
     private val regionsForPreview = List(10) {
         Region(
             id = it.toString(),
@@ -109,6 +110,7 @@ private class RegionsListViewStateContentParameterProvider: PreviewParameterProv
     )
 }
 
+@Suppress("UnusedPrivateMember")
 @Preview(showBackground = true)
 @Composable
 private fun RegionsScreenContentPreview(
@@ -116,9 +118,9 @@ private fun RegionsScreenContentPreview(
 ) {
     RegionsScreenContent(
         content = content,
-        download = {_, _ -> },
+        download = { _, _ -> },
         cancel = {},
-        navigate = {_, _ -> },
+        navigate = { _, _ -> },
         modifier = Modifier.fillMaxSize(),
         listHeader = null
     )

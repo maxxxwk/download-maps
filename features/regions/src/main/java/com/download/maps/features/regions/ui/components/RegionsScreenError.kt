@@ -48,6 +48,7 @@ internal fun RegionsScreenError(
     }
 }
 
+@Suppress("UnusedPrivateMember")
 @Composable
 @Preview(showBackground = true)
 private fun RegionsScreenErrorPreview() {

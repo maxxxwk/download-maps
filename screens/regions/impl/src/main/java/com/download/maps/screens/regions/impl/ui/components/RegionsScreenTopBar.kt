@@ -54,6 +54,7 @@ internal fun RegionsScreenTopBar(
     )
 }
 
+@Suppress("UnusedPrivateMember")
 @Composable
 @Preview
 private fun RegionsScreenTopBarPreview() {
