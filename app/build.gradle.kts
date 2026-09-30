@@ -3,18 +3,17 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.kotlinx.serialization)
 }
 
 android {
     namespace = "com.download.maps"
     compileSdk {
-        version = release(37)
+        version = release(libs.versions.compileSdk.get().toInt())
     }
 
     defaultConfig {
         applicationId = "com.download.maps"
-        minSdk = 24
+        minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
@@ -44,40 +43,15 @@ android {
     }
 }
 
-composeCompiler {
-    stabilityConfigurationFiles.add(
-        rootProject.layout.projectDirectory.file("stability_config.conf")
-    )
-    reportsDestination = layout.buildDirectory.dir("compose_compiler")
-    metricsDestination = layout.buildDirectory.dir("compose_compiler")
-}
-
 dependencies {
-    implementation(libs.androidx.core.ktx)
-
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.work)
-    implementation(libs.androidx.hilt.navigation.compose)
-    ksp(libs.androidx.hilt.compiler)
 
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
-
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-
-    implementation(libs.androidx.activity.compose)
 
     implementation(platform(libs.okhttp.bom))
     implementation(libs.okhttp.core)
@@ -88,5 +62,7 @@ dependencies {
 
     implementation(libs.androidx.work.runtime.ktx)
 
-    implementation(libs.kotlinx.serialization)
+    implementation(project(":common"))
+    implementation(project(":screens:main:impl"))
+    implementation(project(":screens:regions:impl"))
 }

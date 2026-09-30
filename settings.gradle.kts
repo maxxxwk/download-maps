@@ -25,5 +25,12 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Download Maps"
+
+include(":common")
+include(":features:storage-info")
+include(":features:regions")
+include(":screens:main:api")
+include(":screens:main:impl")
+include(":screens:regions:api")
+include(":screens:regions:impl")
 include(":app")
- 

@@ -1,7 +1,7 @@
 package com.download.maps.di.modules
 
-import com.download.maps.di.qualifiers.DispatcherDefault
-import com.download.maps.di.qualifiers.DispatcherIO
+import com.download.maps.common.di.qualifiers.DispatcherDefault
+import com.download.maps.common.di.qualifiers.DispatcherIO
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
