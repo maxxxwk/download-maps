@@ -19,17 +19,19 @@ internal class StorageMemoryInfoViewModel @Inject constructor(
     )
 
     init {
-        intent {
-            storageMemoryInfoRepository.observeStorageMemoryInfo().filterNotNull().collect {
-                reduce {
-                    state.copy(
-                        freeSpace = bytesToReadableFormat(it.freeBytes),
-                        usedRatio = if (it.totalBytes > 0) {
-                            (it.totalBytes - it.freeBytes).toFloat() / it.totalBytes
-                        } else {
-                            0f
-                        }
-                    )
+        intent(registerIdling = false) {
+            repeatOnSubscription {
+                storageMemoryInfoRepository.observeStorageMemoryInfo().filterNotNull().collect {
+                    reduce {
+                        state.copy(
+                            freeSpace = bytesToReadableFormat(it.freeBytes),
+                            usedRatio = if (it.totalBytes > 0) {
+                                (it.totalBytes - it.freeBytes).toFloat() / it.totalBytes
+                            } else {
+                                0f
+                            }
+                        )
+                    }
                 }
             }
         }

@@ -8,10 +8,12 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.OrbitContainerHost
 import org.orbitmvi.orbit.viewmodel.orbitContainer
@@ -27,6 +29,8 @@ internal class RegionsListViewModel @AssistedInject constructor(
         initialState = RegionsListViewState.Loading
     )
 
+    private var observeJob: Job? = null
+
     init {
         reload()
     }
@@ -34,64 +38,60 @@ internal class RegionsListViewModel @AssistedInject constructor(
     @Suppress("LongMethod")
     @OptIn(ExperimentalCoroutinesApi::class)
     fun reload() {
-        intent {
+        observeJob?.cancel()
+        intent(registerIdling = false) {
             reduce { RegionsListViewState.Loading }
             regionsRepository.getRegionsByParentId(parentRegionId)
                 .onSuccess { regions ->
-                    reduce {
-                        val currentContent = state as? RegionsListViewState.Content
-                        RegionsListViewState.Content(
-                            regions = regions,
-                            downloadedRegionIds = currentContent?.downloadedRegionIds ?: emptySet(),
-                            activeRegionId = currentContent?.activeRegionId,
-                            queuedRegionIds = currentContent?.queuedRegionIds ?: emptySet(),
-                            activeProgress = currentContent?.activeProgress ?: 0
-                        )
-                    }
-                    coroutineScope {
+                    reduce { RegionsListViewState.Content(regions = regions) }
+                    repeatOnSubscription {
+                        observeJob = currentCoroutineContext()[Job]
                         launch {
                             downloadMapQueueManager.observeDownloadedRegionIds(regions)
                                 .collect { downloadedIds ->
-                                    reduce {
-                                        (state as? RegionsListViewState.Content)?.copy(
-                                            downloadedRegionIds = downloadedIds
-                                        ) ?: state
+                                    runOn<RegionsListViewState.Content> {
+                                        reduce {
+                                            state.copy(downloadedRegionIds = downloadedIds)
+                                        }
                                     }
                                 }
                         }
                         launch {
-                            downloadMapQueueManager.observeQueueInfo().flatMapLatest {
-                                reduce {
-                                    val currentContent = state as? RegionsListViewState.Content
-                                    currentContent?.copy(
-                                        activeRegionId = it.activeRegionId,
-                                        queuedRegionIds = it.queuedRegionIds,
-                                        activeProgress = if (
-                                            it.activeRegionId != currentContent.activeRegionId
-                                        ) {
-                                            0
-                                        } else {
-                                            currentContent.activeProgress
+                            downloadMapQueueManager.observeQueueInfo()
+                                .onEach { queueInfo ->
+                                    runOn<RegionsListViewState.Content> {
+                                        reduce {
+                                            state.copy(
+                                                activeRegionId = queueInfo.activeRegionId,
+                                                queuedRegionIds = queueInfo.queuedRegionIds,
+                                                activeProgress = if (
+                                                    queueInfo.activeRegionId != state.activeRegionId
+                                                ) {
+                                                    0
+                                                } else {
+                                                    state.activeProgress
+                                                }
+                                            )
                                         }
-                                    ) ?: state
-                                }
-                                if (it.activeRegionId != null) {
-                                    downloadMapQueueManager.observeProgress(
-                                        it.activeRegionId
-                                    ).map { progress -> it.activeRegionId to progress }
-                                } else {
-                                    emptyFlow()
-                                }
-                            }.collect {
-                                reduce {
-                                    val currentContent = state as? RegionsListViewState.Content
-                                    if (currentContent != null && currentContent.activeRegionId == it.first) {
-                                        currentContent.copy(activeProgress = it.second)
-                                    } else {
-                                        state
                                     }
                                 }
-                            }
+                                .flatMapLatest { queueInfo ->
+                                    if (queueInfo.activeRegionId != null) {
+                                        downloadMapQueueManager.observeProgress(queueInfo.activeRegionId)
+                                            .map { progress -> queueInfo.activeRegionId to progress }
+                                    } else {
+                                        emptyFlow()
+                                    }
+                                }
+                                .collect { progressInfo ->
+                                    runOn<RegionsListViewState.Content> {
+                                        if (state.activeRegionId == progressInfo.first) {
+                                            reduce {
+                                                state.copy(activeProgress = progressInfo.second)
+                                            }
+                                        }
+                                    }
+                                }
                         }
                     }
                 }.onFailure { reduce { RegionsListViewState.Error } }
