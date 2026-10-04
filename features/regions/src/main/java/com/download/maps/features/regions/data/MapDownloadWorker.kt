@@ -1,6 +1,7 @@
 package com.download.maps.features.regions.data
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -101,11 +102,7 @@ internal class MapDownloadWorker @AssistedInject constructor(
             }
         }
 
-        return if (tempFile.exists()) {
-            tempFile.renameTo(finalFile)
-        } else {
-            false
-        }
+        return tempFile.exists() && tempFile.renameTo(finalFile)
     }
 
     private fun cleanupTempFile(fileName: String) {
@@ -116,6 +113,7 @@ internal class MapDownloadWorker @AssistedInject constructor(
         }
     }
 
+    @SuppressLint("SpecifyForegroundServiceType")
     private fun createForegroundInfo(fileName: String): ForegroundInfo {
         val notification = buildNotification(
             fileName = fileName,
