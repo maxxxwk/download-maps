@@ -1,5 +1,6 @@
 package com.download.maps.features.storageinfo.ui
 
+import android.os.StatFs
 import androidx.lifecycle.ViewModel
 import com.download.maps.features.storageinfo.data.StorageMemoryInfoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,26 +17,27 @@ internal class StorageMemoryInfoViewModel @Inject constructor(
 
     override val container = orbitContainer<StorageMemoryInfoViewState, Nothing>(
         initialState = StorageMemoryInfoViewState()
-    )
-
-    init {
+    ) {
         intent(registerIdling = false) {
             repeatOnSubscription {
                 storageMemoryInfoRepository.observeStorageMemoryInfo().filterNotNull().collect {
                     reduce {
                         state.copy(
                             freeSpace = bytesToReadableFormat(it.freeBytes),
-                            usedRatio = if (it.totalBytes > 0) {
-                                (it.totalBytes - it.freeBytes).toFloat() / it.totalBytes
-                            } else {
-                                0f
-                            }
+                            usedRatio = it.usedRatio
                         )
                     }
                 }
             }
         }
     }
+
+    private val StatFs.usedRatio: Float
+        get() = if (totalBytes != 0L) {
+            (totalBytes - freeBytes).toFloat() / totalBytes
+        } else {
+            0f
+        }
 
     @Suppress("MagicNumber")
     private fun bytesToReadableFormat(

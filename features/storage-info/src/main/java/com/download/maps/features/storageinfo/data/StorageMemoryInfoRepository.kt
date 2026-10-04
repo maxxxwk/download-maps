@@ -3,7 +3,6 @@ package com.download.maps.features.storageinfo.data
 import android.os.Environment
 import android.os.StatFs
 import com.download.maps.common.di.qualifiers.DispatcherIO
-import com.download.maps.features.storageinfo.data.model.StorageMemoryInfo
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineDispatcher
@@ -18,18 +17,12 @@ import kotlinx.coroutines.isActive
 internal class StorageMemoryInfoRepository @Inject constructor(
     @param:DispatcherIO private val dispatcher: CoroutineDispatcher
 ) {
-    fun observeStorageMemoryInfo(pollIntervalMs: Long = 2000L): Flow<StorageMemoryInfo?> = flow {
+    fun observeStorageMemoryInfo(pollIntervalMs: Long = 2000L): Flow<StatFs?> = flow {
         while (currentCoroutineContext().isActive) {
-            emit(
-                runCatching {
-                    val statFs = StatFs(Environment.getDataDirectory().absolutePath)
-                    StorageMemoryInfo(
-                        totalBytes = statFs.totalBytes,
-                        freeBytes = statFs.availableBytes
-                    )
-                }.getOrNull()
-            )
+            emit(runCatching { StatFs(Environment.getDataDirectory().absolutePath) }.getOrNull())
             delay(pollIntervalMs.milliseconds)
         }
-    }.distinctUntilChanged().flowOn(dispatcher)
+    }.distinctUntilChanged { old, new ->
+        old?.totalBytes == new?.totalBytes && old?.freeBytes == new?.freeBytes
+    }.flowOn(dispatcher)
 }

@@ -27,13 +27,11 @@ internal class RegionsListViewModel @AssistedInject constructor(
     ViewModel() {
     override val container = orbitContainer<RegionsListViewState, Nothing>(
         initialState = RegionsListViewState.Loading
-    )
-
-    private var observeJob: Job? = null
-
-    init {
+    ) {
         reload()
     }
+
+    private var observeJob: Job? = null
 
     @Suppress("LongMethod")
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -99,15 +97,11 @@ internal class RegionsListViewModel @AssistedInject constructor(
     }
 
     fun download(regionId: String, fileName: String) {
-        intent {
-            downloadMapQueueManager.downloadMap(regionId, fileName)
-        }
+        intent { downloadMapQueueManager.downloadMap(regionId, fileName) }
     }
 
     fun cancelDownload(regionId: String) {
-        intent {
-            downloadMapQueueManager.cancelDownload(regionId)
-        }
+        intent { downloadMapQueueManager.cancelDownload(regionId) }
     }
 
     @AssistedFactory
