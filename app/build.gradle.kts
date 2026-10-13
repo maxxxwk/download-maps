@@ -62,7 +62,7 @@ dependencies {
 
     implementation(libs.androidx.work.runtime.ktx)
 
-    implementation(project(":common"))
-    implementation(project(":screens:main:impl"))
-    implementation(project(":screens:regions:impl"))
+    implementation(projects.common)
+    implementation(projects.screens.main.impl)
+    implementation(projects.screens.regions.impl)
 }

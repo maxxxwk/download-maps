@@ -36,14 +36,18 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
-    implementation(project(":common"))
+    implementation(projects.common)
 
     testImplementation(libs.junit.jupiter.api)
-    testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.params)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
+
     testImplementation(libs.mockk)
+
     testImplementation(libs.kotlinx.coroutines.test)
+
     testImplementation(libs.orbit.mvi.test)
+
     testImplementation(libs.turbine)
 }

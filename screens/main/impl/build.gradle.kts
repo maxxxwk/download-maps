@@ -35,9 +35,9 @@ dependencies {
 
     implementation(libs.androidx.activity.compose)
 
-    api(project(":screens:main:api"))
-    implementation(project(":common"))
-    implementation(project(":screens:regions:api"))
-    implementation(project(":features:storage-info"))
-    implementation(project(":features:regions"))
+    api(projects.screens.main.api)
+    implementation(projects.common)
+    implementation(projects.screens.regions.api)
+    implementation(projects.features.storageInfo)
+    implementation(projects.features.regions)
 }

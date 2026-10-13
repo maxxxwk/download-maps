@@ -33,7 +33,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
-    api(project(":screens:regions:api"))
-    implementation(project(":common"))
-    implementation(project(":features:regions"))
+    api(projects.screens.regions.api)
+    implementation(projects.common)
+    implementation(projects.features.regions)
 }
