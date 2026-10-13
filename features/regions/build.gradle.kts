@@ -42,5 +42,18 @@ dependencies {
     implementation(platform(libs.retrofit.bom))
     implementation(libs.retrofit.core)
 
-    implementation(project(":common"))
+    implementation(projects.common)
+
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+
+    testImplementation(libs.mockk)
+
+    testImplementation(libs.kotlinx.coroutines.test)
+
+    testImplementation(libs.orbit.mvi.test)
+
+    testImplementation(libs.turbine)
 }

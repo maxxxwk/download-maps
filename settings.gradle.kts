@@ -24,7 +24,9 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Download Maps"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
+rootProject.name = "DownloadMaps"
 
 include(":common")
 include(":features:storage-info")

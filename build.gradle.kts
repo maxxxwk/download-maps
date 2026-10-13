@@ -10,6 +10,16 @@ plugins {
 }
 
 subprojects {
+    tasks.withType<Test> {
+        useJUnitPlatform()
+        jvmArgs(
+            "-XX:+EnableDynamicAgentLoading",
+            "-Dnet.bytebuddy.experimental=true",
+            "--add-opens=java.base/java.lang=ALL-UNNAMED",
+            "--add-opens=jdk.unsupported/sun.misc=ALL-UNNAMED"
+        )
+    }
+
     plugins.withId(rootProject.libs.plugins.kotlin.compose.get().pluginId) {
         extensions.configure<ComposeCompilerGradlePluginExtension> {
             stabilityConfigurationFiles.add(
