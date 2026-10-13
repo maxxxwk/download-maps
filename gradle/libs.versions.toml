@@ -11,6 +11,13 @@ hilt = "2.60.1"
 androidxHilt = "1.4.0"
 nav3Core = "1.2.0"
 orbitMVI = "12.0.1"
+junitJupiter = "6.1.3"
+junitPlatform = "6.1.3"
+mockk = "1.14.11"
+kotlinxCoroutinesTest = "1.11.0"
+turbine = "1.2.1"
+robolectric = "4.17"
+androidxWorkTesting = "2.12.0"
 
 [libraries]
 androidx-lifecycle-viewmodel-navigation3 = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-navigation3", version.ref = "lifecycle" }
@@ -47,6 +54,15 @@ androidx-activity-compose = { group = "androidx.activity", name = "activity-comp
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version = "2.12.0" }
 
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version = "1.11.0" }
+
+junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junitJupiter" }
+junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junitJupiter" }
+junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junitJupiter" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junitPlatform" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+orbit-mvi-test = { group = "org.orbit-mvi", name = "orbit-test", version.ref = "orbitMVI" }
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
