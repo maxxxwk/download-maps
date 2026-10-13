@@ -7,7 +7,6 @@ import io.mockk.every
 import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -17,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class StorageMemoryInfoRepositoryTest {
 
     private val testDispatcher = StandardTestDispatcher()
